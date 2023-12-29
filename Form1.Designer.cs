@@ -34,17 +34,17 @@
             this.button4 = new System.Windows.Forms.Button();
             this.filtercb = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.roomlbl = new System.Windows.Forms.Label();
-            this.reslbl = new System.Windows.Forms.Label();
-            this.avalbl = new System.Windows.Forms.Label();
-            this.sendBtn = new System.Windows.Forms.Button();
-            this.availibilitycbx = new System.Windows.Forms.ComboBox();
-            this.resDatePc = new System.Windows.Forms.DateTimePicker();
+            this.roomcbx = new System.Windows.Forms.ComboBox();
             this.chOutPc = new System.Windows.Forms.DateTimePicker();
             this.chOutlbl = new System.Windows.Forms.Label();
+            this.resDatePc = new System.Windows.Forms.DateTimePicker();
+            this.availibilitycbx = new System.Windows.Forms.ComboBox();
+            this.avalbl = new System.Windows.Forms.Label();
+            this.reslbl = new System.Windows.Forms.Label();
+            this.roomlbl = new System.Windows.Forms.Label();
+            this.sendBtn = new System.Windows.Forms.Button();
             this.roomdgw = new System.Windows.Forms.DataGridView();
             this.label1 = new System.Windows.Forms.Label();
-            this.roomcbx = new System.Windows.Forms.ComboBox();
             this.button1 = new System.Windows.Forms.Button();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.dateTimePicker3 = new System.Windows.Forms.DateTimePicker();
@@ -125,67 +125,15 @@
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             // 
-            // roomlbl
+            // roomcbx
             // 
-            this.roomlbl.AutoSize = true;
-            this.roomlbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.roomlbl.Location = new System.Drawing.Point(7, 39);
-            this.roomlbl.Name = "roomlbl";
-            this.roomlbl.Size = new System.Drawing.Size(115, 25);
-            this.roomlbl.TabIndex = 0;
-            this.roomlbl.Text = "Room Num:";
-            // 
-            // reslbl
-            // 
-            this.reslbl.AutoSize = true;
-            this.reslbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.reslbl.Location = new System.Drawing.Point(7, 112);
-            this.reslbl.Name = "reslbl";
-            this.reslbl.Size = new System.Drawing.Size(98, 25);
-            this.reslbl.TabIndex = 2;
-            this.reslbl.Text = "Res Date:";
-            // 
-            // avalbl
-            // 
-            this.avalbl.AutoSize = true;
-            this.avalbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.avalbl.Location = new System.Drawing.Point(7, 212);
-            this.avalbl.Name = "avalbl";
-            this.avalbl.Size = new System.Drawing.Size(103, 25);
-            this.avalbl.TabIndex = 4;
-            this.avalbl.Text = "Availibility:";
-            // 
-            // sendBtn
-            // 
-            this.sendBtn.BackColor = System.Drawing.Color.Black;
-            this.sendBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
-            this.sendBtn.ForeColor = System.Drawing.Color.White;
-            this.sendBtn.Location = new System.Drawing.Point(55, 445);
-            this.sendBtn.Name = "sendBtn";
-            this.sendBtn.Size = new System.Drawing.Size(254, 55);
-            this.sendBtn.TabIndex = 10;
-            this.sendBtn.Text = "Send";
-            this.sendBtn.UseVisualStyleBackColor = false;
-            this.sendBtn.Click += new System.EventHandler(this.sendBtn_Click);
-            // 
-            // availibilitycbx
-            // 
-            this.availibilitycbx.FormattingEnabled = true;
-            this.availibilitycbx.Items.AddRange(new object[] {
-            "free",
-            "busy",
-            "reserv"});
-            this.availibilitycbx.Location = new System.Drawing.Point(146, 212);
-            this.availibilitycbx.Name = "availibilitycbx";
-            this.availibilitycbx.Size = new System.Drawing.Size(220, 24);
-            this.availibilitycbx.TabIndex = 5;
-            // 
-            // resDatePc
-            // 
-            this.resDatePc.Location = new System.Drawing.Point(146, 112);
-            this.resDatePc.Name = "resDatePc";
-            this.resDatePc.Size = new System.Drawing.Size(220, 22);
-            this.resDatePc.TabIndex = 6;
+            this.roomcbx.FormattingEnabled = true;
+            this.roomcbx.Location = new System.Drawing.Point(146, 39);
+            this.roomcbx.Name = "roomcbx";
+            this.roomcbx.Size = new System.Drawing.Size(220, 24);
+            this.roomcbx.TabIndex = 9;
+            this.roomcbx.SelectedIndexChanged += new System.EventHandler(this.roomcbx_SelectedIndexChanged);
+            this.roomcbx.SelectionChangeCommitted += new System.EventHandler(this.roomcbx_SelectionChangeCommitted);
             // 
             // chOutPc
             // 
@@ -203,6 +151,68 @@
             this.chOutlbl.Size = new System.Drawing.Size(112, 25);
             this.chOutlbl.TabIndex = 7;
             this.chOutlbl.Text = "Check Out:";
+            // 
+            // resDatePc
+            // 
+            this.resDatePc.Location = new System.Drawing.Point(146, 112);
+            this.resDatePc.Name = "resDatePc";
+            this.resDatePc.Size = new System.Drawing.Size(220, 22);
+            this.resDatePc.TabIndex = 6;
+            // 
+            // availibilitycbx
+            // 
+            this.availibilitycbx.FormattingEnabled = true;
+            this.availibilitycbx.Items.AddRange(new object[] {
+            "free",
+            "busy",
+            "reserv"});
+            this.availibilitycbx.Location = new System.Drawing.Point(146, 212);
+            this.availibilitycbx.Name = "availibilitycbx";
+            this.availibilitycbx.Size = new System.Drawing.Size(220, 24);
+            this.availibilitycbx.TabIndex = 5;
+            // 
+            // avalbl
+            // 
+            this.avalbl.AutoSize = true;
+            this.avalbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.avalbl.Location = new System.Drawing.Point(7, 212);
+            this.avalbl.Name = "avalbl";
+            this.avalbl.Size = new System.Drawing.Size(103, 25);
+            this.avalbl.TabIndex = 4;
+            this.avalbl.Text = "Availibility:";
+            // 
+            // reslbl
+            // 
+            this.reslbl.AutoSize = true;
+            this.reslbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.reslbl.Location = new System.Drawing.Point(7, 112);
+            this.reslbl.Name = "reslbl";
+            this.reslbl.Size = new System.Drawing.Size(98, 25);
+            this.reslbl.TabIndex = 2;
+            this.reslbl.Text = "Res Date:";
+            // 
+            // roomlbl
+            // 
+            this.roomlbl.AutoSize = true;
+            this.roomlbl.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.roomlbl.Location = new System.Drawing.Point(7, 39);
+            this.roomlbl.Name = "roomlbl";
+            this.roomlbl.Size = new System.Drawing.Size(115, 25);
+            this.roomlbl.TabIndex = 0;
+            this.roomlbl.Text = "Room Num:";
+            // 
+            // sendBtn
+            // 
+            this.sendBtn.BackColor = System.Drawing.Color.Black;
+            this.sendBtn.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.sendBtn.ForeColor = System.Drawing.Color.White;
+            this.sendBtn.Location = new System.Drawing.Point(55, 445);
+            this.sendBtn.Name = "sendBtn";
+            this.sendBtn.Size = new System.Drawing.Size(254, 55);
+            this.sendBtn.TabIndex = 10;
+            this.sendBtn.Text = "Send";
+            this.sendBtn.UseVisualStyleBackColor = false;
+            this.sendBtn.Click += new System.EventHandler(this.sendBtn_Click);
             // 
             // roomdgw
             // 
@@ -224,14 +234,6 @@
             this.label1.Size = new System.Drawing.Size(94, 29);
             this.label1.TabIndex = 12;
             this.label1.Text = "Rooms";
-            // 
-            // roomcbx
-            // 
-            this.roomcbx.FormattingEnabled = true;
-            this.roomcbx.Location = new System.Drawing.Point(146, 39);
-            this.roomcbx.Name = "roomcbx";
-            this.roomcbx.Size = new System.Drawing.Size(220, 24);
-            this.roomcbx.TabIndex = 9;
             // 
             // button1
             // 

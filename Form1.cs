@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace WindowsFormsApp1
 {
@@ -42,9 +45,10 @@ namespace WindowsFormsApp1
             roomdgw.DataSource = ds.Tables[0];
             Con.Close();
         }
+
+
         public void GetFreeRooms()
         {
-            string free = "free";
             Con.Open();
             SqlCommand cmd = new SqlCommand("select RoomNumber from RoomsTbl",Con);
             SqlDataReader rdr;
@@ -56,7 +60,7 @@ namespace WindowsFormsApp1
             roomcbx.DataSource = dt;
             Con.Close();
         }
-
+      
         public void UpdateRoomAva()
         {
 
@@ -86,42 +90,139 @@ namespace WindowsFormsApp1
         {
 
         }
-        
+        string checkIn, checkOut;
+        int den;
+
+        private void roomcbx_SelectedIndexChanged(object sender, EventArgs e)
+        {
+         
+        }
+        private void findRoomNum()
+        {
+            Con.Open();
+            string query = "select * from ReservationTbl where RoomNum="+ roomcbx.SelectedValue.ToString() + "";
+            SqlCommand cmd = new SqlCommand(query,Con); 
+            DataTable dt = new DataTable();
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+
+         
+                foreach (DataRow dr in dt.Rows)
+                {
+                    den = Convert.ToInt32(dr["RoomNum"].ToString());
+                    checkIn = dr["ResDate"].ToString();
+                    checkOut = dr["ChOutDate"].ToString();
+                }
+          
+            Con.Close();
+
+            
+        }
+
+
+        private void roomcbx_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            findRoomNum();
+        }
+        private void reset()
+        {
+            roomcbx.SelectedIndex = -1;
+            availibilitycbx.SelectedIndex = -1;
+        }
+
         private void sendBtn_Click(object sender, EventArgs e)
         {
-            try
+         
+            if (checkIn != null && checkOut != null)
             {
                 //******
-                var startDate = dateTimePicker1.Value;
-                var endDate = dateTimePicker3.Value;
-                List<DateTime> workingDays = new List<DateTime>();
+                List<string> databaseDays = new List<string>();
+
+
+                for (DateTime counter = DateTime.Parse(checkIn); counter <= DateTime.Parse(checkOut); counter = counter.AddDays(1))
+                {
+                    databaseDays.Add(counter.ToString("dd/MM/yyyy 00:00:00"));
+                }
+
+                //foreach (var item in databaseDays)
+                //{
+                //    MessageBox.Show("that is databaseDays" + " --- " + item);
+                //}
+                //******
+                //******
+                var startDate = resDatePc.Value;
+                var endDate = chOutPc.Value;
+             
+                List<string> workingDays = new List<string>();
+
 
                 for (DateTime counter = startDate; counter <= endDate; counter = counter.AddDays(1))
                 {
-                    if (counter.DayOfWeek != DayOfWeek.Saturday && counter.DayOfWeek != DayOfWeek.Sunday)
-                        workingDays.Add(counter);
+                    workingDays.Add(counter.ToString("dd/MM/yyyy 00:00:00"));
                 }
+
+
+                //foreach (var item in workingDays)
+                //{
+                //    MessageBox.Show("that is workingdays" + " --- " + item);
+                //}
+
+                //MessageBox.Show("That is check in" + " --- " + checkIn);
 
                 //*****
 
-               
 
-                var date1 = resDatePc.Value.ToString("MM/dd/yyyy");
-                var date2 = chOutPc.Value.ToString("MM/dd/yyyy");
+                bool existsCheckIn = workingDays.Any(s => s.Contains(checkIn));
 
-                Con.Open();
-                string query = "insert into ReservationTbl values('" + roomcbx.SelectedValue.ToString() + "','" + date1 + "','" + date2 + "','" + availibilitycbx.SelectedItem.ToString() + "')";
-                SqlCommand cmd = new SqlCommand(query, Con);
-                cmd.ExecuteNonQuery();
-                Con.Close();
-                MessageBox.Show("Room successfull added !");
-                ListAll();
+                bool existsCheckOut = workingDays.Any(s => s.Contains(checkOut)); 
+
+                bool existsDatas = workingDays.Intersect(databaseDays).Any();
+
+
+                if (existsDatas == true)
+                {
+                    MessageBox.Show("These Dates are full!");
+                }
+                else
+                {
+                    var date1 = resDatePc.Value.ToString("MM/dd/yyyy");
+                    var date2 = chOutPc.Value.ToString("MM/dd/yyyy");
+
+                    Con.Open();
+                    string query = "insert into ReservationTbl values('" + roomcbx.SelectedValue.ToString() + "','" + date1 + "','" + date2 + "','" + availibilitycbx.SelectedItem.ToString() + "')";
+                    SqlCommand cmd = new SqlCommand(query, Con);
+                    cmd.ExecuteNonQuery();
+                    Con.Close();
+                    MessageBox.Show("Room successfull added !");
+                    ListAll();
+                    reset();
+
+                    //if (roomcbx.SelectedIndex == -1 && availibilitycbx.SelectedIndex == -1)
+                    //{
+                    //    MessageBox.Show("Please fill all boxes !!!");
+                }
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message);
-            }
+            //else
+            //{
+
+                //var date1 = resDatePc.Value.ToString("MM/dd/yyyy");
+                //var date2 = chOutPc.Value.ToString("MM/dd/yyyy");
+                //Con.Open();
+                //string query = "insert into ReservationTbl values('" + roomcbx.SelectedValue.ToString() + "','" + date1 + "','" + date2 + "','" + availibilitycbx.SelectedItem.ToString() + "')";
+                //SqlCommand cmd = new SqlCommand(query, Con);
+                //cmd.ExecuteNonQuery();
+                //Con.Close();
+                //MessageBox.Show("Room successfull added !");
+                //ListAll();
+                //reset();
+                //if (roomcbx.SelectedIndex == -1 && availibilitycbx.SelectedIndex == -1)
+                //{
+                //    MessageBox.Show("Please fill all boxes !!!");
+            //}
         }
+
+   
+
 
 
         // iki datetime aralık gün sayısını bulma
@@ -134,24 +235,35 @@ namespace WindowsFormsApp1
             string name = dateTimePicker1.Value.ToString();
             string name3 = dateTimePicker3.Value.ToString();
             string total = name3 + ",,,,,,, " + name;
-            MessageBox.Show(total);
+            //MessageBox.Show(total);
 
             //*****
 
-
-
             var startDate = dateTimePicker1.Value;
             var endDate = dateTimePicker3.Value;
+
             List<DateTime> workingDays = new List<DateTime>();
 
-            for (DateTime counter = startDate; counter <= endDate; counter = counter.AddDays(1))
+            for (DateTime counter = startDate; counter <= endDate.AddDays(1); counter = counter.AddDays(1))
             {
-                if (counter.DayOfWeek != DayOfWeek.Saturday && counter.DayOfWeek != DayOfWeek.Sunday)
-                    workingDays.Add(counter);
-                //MessageBox.Show(counter.ToString());
+                //if (counter.DayOfWeek != DayOfWeek.Saturday && counter.DayOfWeek != DayOfWeek.Sunday)
+                workingDays.Add(counter);
             }
 
+            //MessageBox.Show(workingDays[workingDays.Count - 1].ToString());
 
+            if (workingDays.Contains(workingDays[workingDays.Count - 1]) && workingDays.Contains(startDate))
+            {
+                for (DateTime counter = workingDays[0]; counter <= workingDays[workingDays.Count - 1]; counter = counter.AddDays(1))
+                {
+
+                    MessageBox.Show(counter.ToString());
+                }
+            }
+            else
+            {
+                MessageBox.Show("not Match");
+            }
             //*****
 
 
