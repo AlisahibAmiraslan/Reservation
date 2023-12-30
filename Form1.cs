@@ -97,6 +97,10 @@ namespace WindowsFormsApp1
         {
          
         }
+         
+        List<string> daysData = new List<string>();
+        List<string> countCheckOut = new List<string>();
+
         private void findRoomNum()
         {
             Con.Open();
@@ -107,16 +111,36 @@ namespace WindowsFormsApp1
             da.Fill(dt);
 
          
-                foreach (DataRow dr in dt.Rows)
-                {
-                    den = Convert.ToInt32(dr["RoomNum"].ToString());
-                    checkIn = dr["ResDate"].ToString();
-                    checkOut = dr["ChOutDate"].ToString();
-                }
-          
-            Con.Close();
 
-            
+            foreach (DataRow dr in dt.Rows)
+                {
+                den = Convert.ToInt32(dr["RoomNum"].ToString());
+                checkIn = dr["ResDate"].ToString();
+                checkOut = dr["ChOutDate"].ToString();
+                
+
+                // gelecekte check out veya check ın hesaplama için 
+                //for (DateTime counter = DateTime.Parse(checkIn); counter <= DateTime.Parse(checkOut); counter = counter.AddDays(1))
+                //{
+                //    countCheckOut.Add(counter.ToString("dd/MM/yyyy 00:00:00"));
+                //}
+
+
+                /* giriş tarihleri bir-birine qarışmaması için check ın time'a elave "AddDays(1)" yeni bir gün elave ettim
+                  Meselen yeni rezervasyon yaparken diger yeni odanın check out tarixi ile köhne rezervasyon tarixleri üst üsde düşürdü
+                ve buna görede eski rezervasyon check out'una bir gün elave ederek sorunu aradan kaldırdım
+                */
+
+
+                for (DateTime counter = DateTime.Parse(checkIn).AddDays(1); counter <= DateTime.Parse(checkOut); counter = counter.AddDays(1))
+                {
+                    daysData.Add(counter.ToString("dd/MM/yyyy 00:00:00"));
+                }
+
+            }
+
+            Con.Close();
+          
         }
 
 
@@ -132,17 +156,21 @@ namespace WindowsFormsApp1
 
         private void sendBtn_Click(object sender, EventArgs e)
         {
-         
-            if (checkIn != null && checkOut != null)
+            if (daysData != null && checkIn != null && checkOut != null)
             {
                 //******
-                List<string> databaseDays = new List<string>();
+                //List<string> databaseDays = new List<string>();
 
 
-                for (DateTime counter = DateTime.Parse(checkIn); counter <= DateTime.Parse(checkOut); counter = counter.AddDays(1))
-                {
-                    databaseDays.Add(counter.ToString("dd/MM/yyyy 00:00:00"));
-                }
+                //for (DateTime counter = DateTime.Parse(checkIn); counter <= DateTime.Parse(checkOut); counter = counter.AddDays(1))
+                //{
+                //    databaseDays.Add(counter.ToString("dd/MM/yyyy 00:00:00"));
+                //}
+
+                //foreach (string item in daysData)
+                //{
+                //    MessageBox.Show(item);
+                //}
 
                 //foreach (var item in databaseDays)
                 //{
@@ -152,7 +180,7 @@ namespace WindowsFormsApp1
                 //******
                 var startDate = resDatePc.Value;
                 var endDate = chOutPc.Value;
-             
+
                 List<string> workingDays = new List<string>();
 
 
@@ -160,7 +188,6 @@ namespace WindowsFormsApp1
                 {
                     workingDays.Add(counter.ToString("dd/MM/yyyy 00:00:00"));
                 }
-
 
                 //foreach (var item in workingDays)
                 //{
@@ -172,19 +199,26 @@ namespace WindowsFormsApp1
                 //*****
 
 
-                bool existsCheckIn = workingDays.Any(s => s.Contains(checkIn));
+                //bool existsCheckIn = workingDays.Any(s => s.Contains(checkIn));
 
-                bool existsCheckOut = workingDays.Any(s => s.Contains(checkOut)); 
+                //bool existsCheckOut = workingDays.Any(s => s.Contains(checkOut));
 
-                bool existsDatas = workingDays.Intersect(databaseDays).Any();
+                bool existsDatas = workingDays.Intersect(daysData).Any();
 
 
-                if (existsDatas == true)
+
+                if (existsDatas)
                 {
                     MessageBox.Show("These Dates are full!");
+                    reset();
+                    //daysdata'nı sil
+                    daysData.Clear();
                 }
                 else
                 {
+                    //****************
+                    //en son bura yoruma alındı
+
                     var date1 = resDatePc.Value.ToString("MM/dd/yyyy");
                     var date2 = chOutPc.Value.ToString("MM/dd/yyyy");
 
@@ -196,32 +230,59 @@ namespace WindowsFormsApp1
                     MessageBox.Show("Room successfull added !");
                     ListAll();
                     reset();
+                    //daysdata'nı sil
+                    daysData.Clear();
+                    //en son bura yoruma alındı
+                    //****************
 
                     //if (roomcbx.SelectedIndex == -1 && availibilitycbx.SelectedIndex == -1)
                     //{
                     //    MessageBox.Show("Please fill all boxes !!!");
                 }
-            }
-            //else
-            //{
+        }
+            else
+            {
+                //en son bura yoruma alındı
+                //****************
 
-                //var date1 = resDatePc.Value.ToString("MM/dd/yyyy");
-                //var date2 = chOutPc.Value.ToString("MM/dd/yyyy");
-                //Con.Open();
-                //string query = "insert into ReservationTbl values('" + roomcbx.SelectedValue.ToString() + "','" + date1 + "','" + date2 + "','" + availibilitycbx.SelectedItem.ToString() + "')";
-                //SqlCommand cmd = new SqlCommand(query, Con);
-                //cmd.ExecuteNonQuery();
-                //Con.Close();
-                //MessageBox.Show("Room successfull added !");
-                //ListAll();
-                //reset();
-                //if (roomcbx.SelectedIndex == -1 && availibilitycbx.SelectedIndex == -1)
-                //{
-                //    MessageBox.Show("Please fill all boxes !!!");
+                var date1 = resDatePc.Value.ToString("MM/dd/yyyy");
+                var date2 = chOutPc.Value.ToString("MM/dd/yyyy");
+                Con.Open();
+                string query = "insert into ReservationTbl values('" + roomcbx.SelectedValue.ToString() + "','" + date1 + "','" + date2 + "','" + availibilitycbx.SelectedItem.ToString() + "')";
+                SqlCommand cmd = new SqlCommand(query, Con);
+                cmd.ExecuteNonQuery();
+                Con.Close();
+                MessageBox.Show("Room successfull added !");
+                ListAll();
+                reset();
+                //daysdata'nı sil
+                daysData.Clear();
+
+                //en son bura yoruma alındı
+                //****************
+            }
+            //if (roomcbx.SelectedIndex == -1 && availibilitycbx.SelectedIndex == -1)
+            //{
+            //    MessageBox.Show("Please fill all boxes !!!");
             //}
         }
 
-   
+
+        //gelecekte check out veya check ın hesaplama için
+        private void btnCheckOut_Click(object sender, EventArgs e)
+        {
+          foreach (var item in countCheckOut)
+            {
+                MessageBox.Show(item);
+            }
+            countCheckOut.Clear();
+        }
+
+
+
+
+
+
 
 
 
